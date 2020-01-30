@@ -1,23 +1,14 @@
-package org.datastructure.LinkedList.SingleLinkedList;
-
-import java.rmi.UnmarshalException;
-import java.util.LinkedList;
-import java.util.Stack;
+package org.datastructure.linkedList.doublelinkedList;
 
 /**
  * @author LinYongJin
- * @date 2020/1/27 15:01
+ * @date 2020/1/30 15:28
  */
-public class SingleLinkedList {
+public class DoubleLinkedList {
 
     private Country head;
 
     private int length;
-
-    public SingleLinkedList() {
-        this.length = 0;
-        head = new Country(0, "", "");
-    }
 
     /**
      * 添加节点
@@ -29,6 +20,9 @@ public class SingleLinkedList {
             temp = temp.next;
         }
         temp.next = country;
+        if (length > 0) {
+            country.pre = temp;
+        }
         length++;
     }
 
@@ -43,7 +37,11 @@ public class SingleLinkedList {
                 temp = temp.next;
             } else {
                 country.next = temp.next;
+                temp.next.pre = country;
                 temp.next = country;
+                if (head == temp) {
+                    country.pre = temp;
+                }
                 length++;
                 return;
             }
@@ -85,6 +83,11 @@ public class SingleLinkedList {
         while (temp.next != null) {
             if (temp.next.getNo() == no) {
                 temp.next = temp.next.next;
+                if (temp == head) {
+                    temp.next.pre = null;
+                } else {
+                    temp.next.pre = temp;
+                }
                 length--;
                 return;
             } else {
@@ -145,6 +148,9 @@ public class SingleLinkedList {
         Country newHead = new Country(0, "", "");
         while (current != null) {
             current.next = newHead.next;
+            if (newHead.next != null) {
+                current.next.pre = current;
+            }
             newHead.next = current;
             current = next;
             if (next != null) {
@@ -156,54 +162,25 @@ public class SingleLinkedList {
     }
 
     /**
-     * 反向打印链表
-     */
-    public void reversePrint() {
-        Country temp = head;
-        Stack<Country> stack = new Stack<>();
-        while (temp.next != null) {
-            stack.push(temp.next);
-            temp = temp.next;
-        }
-        int stackSize = stack.size();
-        for (int i = 0; i < stackSize; i++) {
-            System.out.println(stack.pop());
-        }
-    }
-
-    /**
      * 合并链表
-     * @param singleLinkedList
+     * @param doubleLinkedList
      */
-    public void addAll(SingleLinkedList singleLinkedList) {
+    public void addAll(DoubleLinkedList doubleLinkedList) {
         Country temp = head;
         while (temp.next != null) {
             temp = temp.next;
         }
-        length += singleLinkedList.size();
-        temp.next = singleLinkedList.linkedFirst();
+        length += doubleLinkedList.size();
+        temp.next = doubleLinkedList.linkedFirst();
+        doubleLinkedList.linkedFirst().pre = temp;
     }
 
     /**
      * 按顺序合并链表
-     * @param singleLinkedList
+     * @param doubleLinkedList
      */
-    public void addAllByOrder(SingleLinkedList singleLinkedList) {
-        addAll(singleLinkedList);
-        Country temp = head;
-        SingleLinkedList list = new SingleLinkedList();
-        while (temp.next != null) {
-            list.orderAdd(temp.next);
-            temp = temp.next;
-        }
-    }
-
-    /**
-     * 按顺序合并链表
-     * @param singleLinkedList
-     */
-    public void orderAddAll(SingleLinkedList singleLinkedList) {
-        addAll(singleLinkedList);
+    public void orderAddAll(DoubleLinkedList doubleLinkedList) {
+        addAll(doubleLinkedList);
         Country current = head.next;
         Country next = current.next;
         Country newHead = new Country(0, "", "");
@@ -213,7 +190,13 @@ public class SingleLinkedList {
             while (newTemp.next != null) {
                 if (current.getNo() < newTemp.next.getNo()) {
                     current.next = newTemp.next;
+                    current.next.pre = current;
                     newTemp.next = current;
+                    if (newTemp == newHead) {
+                        current.pre = null;
+                    } else {
+                        current.pre = newTemp;
+                    }
                     flag = false;
                     break;
                 } else {
@@ -223,6 +206,11 @@ public class SingleLinkedList {
             if (flag) {
                 current.next = null;
                 newTemp.next = current;
+                if (newTemp == newHead) {
+                    current.pre = null;
+                } else {
+                    current.pre = newTemp;
+                }
             }
             newTemp = newHead;
             current = next;
@@ -234,6 +222,8 @@ public class SingleLinkedList {
         head.next = newHead.next;
         newHead.next = null;
     }
+    
+    
 
     /**
      * 得到第一个节点
@@ -248,20 +238,6 @@ public class SingleLinkedList {
      * @return
      */
     public int size() {
-        return length;
-    }
-
-    /**
-     * 获取链表长度
-     * @return
-     */
-    public int getLength() {
-        Country temp = head;
-        int length = 0;
-        while (temp.next != null) {
-            temp = temp.next;
-            length++;
-        }
         return length;
     }
 

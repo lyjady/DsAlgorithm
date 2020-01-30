@@ -1,4 +1,4 @@
-package org.datastructure.LinkedList.SingleLinkedList;
+package org.datastructure.linkedList.singlelinkedList;
 
 /**
  * @author LinYongJin
