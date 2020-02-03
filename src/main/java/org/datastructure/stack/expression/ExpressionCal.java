@@ -8,8 +8,6 @@ import java.util.*;
  */
 public class ExpressionCal {
 
-    private boolean isDouble = false;
-
     private Stack<String> signStack;
 
     private Queue<String> queue;
@@ -65,13 +63,6 @@ public class ExpressionCal {
         }
         System.out.println();
         toSuffix(list);
-    }
-
-    public static void main(String[] args) {
-        ExpressionCal expressionCal = new ExpressionCal();
-        Double calculate = expressionCal.calculate("3 * ( 6.9 + 9 ) / 4 + 10.5");
-        System.out.println();
-        System.out.println(calculate);
     }
 
     private void toSuffix(List<String> list) {
@@ -182,6 +173,13 @@ public class ExpressionCal {
         } else {
             throw new RuntimeException("非法的运算符");
         }
+    }
+
+    public static void main(String[] args) {
+        ExpressionCal expressionCal = new ExpressionCal();
+        Double calculate = expressionCal.calculate("3 * ( 6.9 + 9 ) / 4 + 10.5");
+        System.out.println();
+        System.out.println(calculate);
     }
 }
 
