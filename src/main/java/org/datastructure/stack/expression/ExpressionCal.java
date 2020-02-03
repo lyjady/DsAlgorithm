@@ -71,7 +71,7 @@ public class ExpressionCal {
             // 2. 判断时候为数字是就进入数字队列
             if (this.isNumber(ele)) {
                 queue.add(ele);
-            } else if (isOperator(ele)){
+            } else if (isOperator(ele)) {
                 // 3.如果是运算符则对运算符比较优先级
                 // 3.1 如果栈为空或者栈顶元素是左括号则直接入栈
                 if (signStack.size() == 0 || "(".equals(signStack.peek())) {
@@ -168,7 +168,7 @@ public class ExpressionCal {
     private int getPriority(String element) {
         if ("+".equals(element) || "-".equals(element)) {
             return 1;
-        } else if ("*".equals(element) || "/".equals(element)){
+        } else if ("*".equals(element) || "/".equals(element)) {
             return 2;
         } else {
             throw new RuntimeException("非法的运算符");
