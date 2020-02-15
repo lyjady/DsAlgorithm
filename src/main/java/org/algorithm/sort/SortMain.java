@@ -176,6 +176,9 @@ public class SortMain {
             temp = arr[tempLeft];
             arr[tempLeft] = arr[tempRight];
             arr[tempRight] = temp;
+            // 数组中有相同的值没有如下判断将会造成死循环, 因为此时这两个变量都指向了相同的值并且参考值就是该值
+            // 此时上面的while判断都将不会执行, 两个变量不会移动, if (tempLeft >= tempRight) 这个判断永远不会成立
+            // 所以需要如下判断来迫使变量发生移动
             if (arr[tempLeft] == center) {
                 tempRight--;
             }
