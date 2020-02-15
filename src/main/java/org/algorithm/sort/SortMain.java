@@ -13,7 +13,7 @@ public class SortMain {
     @Test
     public void test() {
         int[] arr = {231, 32, 32, 123, 334, 1, 6, 34};
-        selectSort(arr);
+        quickSort(arr, 0, arr.length - 1);
         System.out.println(Arrays.toString(arr));
     }
 
@@ -24,9 +24,9 @@ public class SortMain {
             arr[i] = (int) (Math.random() * 80000);
         }
         long startTime = System.currentTimeMillis();
-        selectSort(arr);
+        quickSort(arr, 0, arr.length - 1);
         long endTime = System.currentTimeMillis();
-        System.out.println("费时: " + (endTime - startTime));
+        System.out.println("费时: " + (endTime - startTime) + "ms");
     }
 
     /**
@@ -80,6 +80,116 @@ public class SortMain {
             temp = arr[i];
             arr[i] = arr[index];
             arr[index] = temp;
+        }
+    }
+
+    /**
+     * 插入排序
+     *
+     * @param arr 待排序的数组
+     */
+    public void insertSort(int[] arr) {
+        for (int i = 1; i < arr.length; i++) {
+            int sortedVal = arr[i];
+            for (int j = i; j > 0; j--) {
+                if (sortedVal > arr[j - 1]) {
+                    arr[j] = sortedVal;
+                    break;
+                } else if (j == 1) {
+                    arr[j] = arr[j - 1];
+                    arr[0] = sortedVal;
+                } else {
+                    arr[j] = arr[j - 1];
+                }
+            }
+        }
+    }
+
+    /**
+     * 希尔排序(交换法)
+     *
+     * @param arr 待排序的数组
+     */
+    public void shellSortExchange(int[] arr) {
+        int temp = 0;
+        for (int step = arr.length / 2; step > 0; step /= 2) {
+            for (int i = step; i < arr.length; i++) {
+                for (int j = i - step; j >= 0; j -= step) {
+                    if (arr[j] > arr[j + step]) {
+                        temp = arr[j + step];
+                        arr[j + step] = arr[j];
+                        arr[j] = temp;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 希尔排序(位移法)
+     *
+     * @param arr 待排序的数组
+     */
+    public void shellSortDisplacement(int[] arr) {
+        for (int step = arr.length / 2; step > 0; step /= 2) {
+            for (int i = step; i < arr.length; i++) {
+                // sortedVal: 待比较的数
+                int sortedVal = arr[i];
+                for (int j = i - step; j >= 0; j -= step) {
+                    // arr[j]: 是待比较的数前一个步长的数
+                    if (sortedVal > arr[j]) {
+                        arr[j + step] = sortedVal;
+                        break;
+                    } else if (j - 2 * step <= 0) {
+                        arr[j + step] = arr[j];
+                        arr[j] = sortedVal;
+                    } else {
+                        arr[j + step] = arr[j];
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 快速排序
+     *
+     * @param arr        待排序的数组
+     * @param leftIndex  左边的索引
+     * @param rightIndex 右边的索引
+     */
+    public void quickSort(int[] arr, int leftIndex, int rightIndex) {
+        int tempLeft = leftIndex;
+        int tempRight = rightIndex;
+        int temp;
+        int center = arr[(tempLeft + tempRight) / 2];
+        while (true) {
+            while (arr[tempLeft] < center) {
+                tempLeft++;
+            }
+            while (arr[tempRight] > center) {
+                tempRight--;
+            }
+            if (tempLeft >= tempRight) {
+                break;
+            }
+            temp = arr[tempLeft];
+            arr[tempLeft] = arr[tempRight];
+            arr[tempRight] = temp;
+            if (arr[tempLeft] == center) {
+                tempRight--;
+            }
+            if (arr[tempRight] == center) {
+                tempLeft++;
+            }
+        }
+        // 左递归
+        if (leftIndex < tempRight) {
+            quickSort(arr, leftIndex, tempRight - 1);
+        }
+        // 右递归
+        if (rightIndex > tempLeft) {
+            quickSort(arr, tempLeft + 1, rightIndex);
         }
     }
 }
