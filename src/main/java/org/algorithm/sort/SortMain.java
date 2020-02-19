@@ -12,8 +12,9 @@ public class SortMain {
 
     @Test
     public void test() {
-        int[] arr = {231, 32, 32, 123, 334, 1, 6, 34};
-        quickSort(arr, 0, arr.length - 1);
+//        int[] arr = {231, 32, 32, 123, 334, 1, 6, 34};
+        int[] arr = {8, 4, 5, 7, 1, 3, 2, 6};
+        mergeSort(arr, 0, arr.length - 1, new int[arr.length]);
         System.out.println(Arrays.toString(arr));
     }
 
@@ -24,7 +25,7 @@ public class SortMain {
             arr[i] = (int) (Math.random() * 80000);
         }
         long startTime = System.currentTimeMillis();
-        quickSort(arr, 0, arr.length - 1);
+        mergeSort(arr, 0, arr.length - 1, new int[arr.length]);
         long endTime = System.currentTimeMillis();
         System.out.println("费时: " + (endTime - startTime) + "ms");
     }
@@ -193,6 +194,69 @@ public class SortMain {
         // 右递归
         if (rightIndex > tempLeft) {
             quickSort(arr, tempLeft + 1, rightIndex);
+        }
+    }
+
+    /**
+     * 归并排序(分)
+     *
+     * @param arr 数组
+     * @param left 要分的数组的左边的索引
+     * @param right 要分的数组右边的索引
+     */
+    public void mergeSort(int[] arr, int left, int right, int[] temp) {
+        if (left < right) {
+            int middle = (left + right) / 2;
+            // 向左分治
+            mergeSort(arr, left, middle, temp);
+            // 向右分治
+            mergeSort(arr, middle + 1, right, temp);
+            // 合并
+            merge(arr, left, middle, right, temp);
+        }
+    }
+
+    /**
+     * 归并排序将分的合并
+     *
+     * @param left   左边有序数列的初始器=索引
+     * @param middle 中间的索引
+     * @param right  右边有序数列的索引最大值
+     * @param temp   临时数组
+     */
+    public void merge(int[] arr, int left, int middle, int right, int[] temp) {
+        int tempLeftIndex = left;
+        // 右边有序数列的索引最小值
+        int tempRightIndex = middle + 1;
+        // 临时数组的初始索引
+        int tempIndex = 0;
+        // 两个有序数列进行比较, 将大的那个放到临时数组中去。一旦左边的索引大于中间的或者右边的索引大于最右边的那就说明有一边已经比较完了
+        while (tempLeftIndex <= middle && tempRightIndex <= right) {
+            if (arr[tempLeftIndex] > arr[tempRightIndex]) {
+                // 如果左边的数大于右边的数那么将左边的数放到临时数组中
+                // 左边的临时索引+1
+                temp[tempIndex++] = arr[tempRightIndex++];
+            } else {
+                // 反之亦然
+                temp[tempIndex++] = arr[tempLeftIndex++];
+            }
+        }
+        if (tempLeftIndex > middle) {
+            // 说明右边的有序数列还剩下, 将剩下的全部放置到临时数组中
+            while (tempRightIndex <= right) {
+                temp[tempIndex++] = arr[tempRightIndex++];
+            }
+        } else {
+            // 反之亦然
+            while (tempLeftIndex <= middle) {
+                temp[tempIndex++] = arr[tempLeftIndex++];
+            }
+        }
+        // 将临时数组拷贝到原数组中去
+        int tempStart = left;
+        int t = 0;
+        while (tempStart <= right) {
+            arr[tempStart++] = temp[t++];
         }
     }
 }
