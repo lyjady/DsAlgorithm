@@ -3,6 +3,7 @@ package org.algorithm.sort;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * @author LinYongJin
@@ -12,9 +13,8 @@ public class SortMain {
 
     @Test
     public void test() {
-//        int[] arr = {231, 32, 32, 123, 334, 1, 6, 34};
-        int[] arr = {8, 4, 5, 7, 1, 3, 2, 6};
-        mergeSort(arr, 0, arr.length - 1, new int[arr.length]);
+        int[] arr = {231, 32, 32, 123, 334, 1, 6, 34};
+        radixSort(arr);
         System.out.println(Arrays.toString(arr));
     }
 
@@ -25,7 +25,7 @@ public class SortMain {
             arr[i] = (int) (Math.random() * 80000);
         }
         long startTime = System.currentTimeMillis();
-        mergeSort(arr, 0, arr.length - 1, new int[arr.length]);
+        radixSort(arr);
         long endTime = System.currentTimeMillis();
         System.out.println("费时: " + (endTime - startTime) + "ms");
     }
@@ -200,8 +200,8 @@ public class SortMain {
     /**
      * 归并排序(分)
      *
-     * @param arr 数组
-     * @param left 要分的数组的左边的索引
+     * @param arr   数组
+     * @param left  要分的数组的左边的索引
      * @param right 要分的数组右边的索引
      */
     public void mergeSort(int[] arr, int left, int right, int[] temp) {
@@ -257,6 +257,41 @@ public class SortMain {
         int t = 0;
         while (tempStart <= right) {
             arr[tempStart++] = temp[t++];
+        }
+    }
+
+    /**
+     * 基数排序
+     *
+     * @param arr 待排序的数组
+     */
+    public void radixSort(int[] arr) {
+        // 桶二维数组
+        int[][] bucket = new int[10][arr.length];
+        // 创建一个数组保存桶中相应的元素个数
+        int[] validCount = new int[10];
+        // 取得数组中最大的那个数
+        int max = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] > max) {
+                max = arr[i];
+            }
+        }
+        for (int i = 0; i < String.valueOf(max).length(); i++) {
+            for (int j = 0; j < arr.length; j++) {
+                int digit = (int) (arr[j] / Math.pow(10, i) % 10);
+                // 向指定的桶中放元素, 并将存放有效长度的数组中对应的元素+1
+                bucket[digit][validCount[digit]++] = arr[j];
+            }
+            // 按顺序取出桶中的元素放置到原数组中去, 并重置validaCount
+            int index = 0;
+            for (int j = 0; j < bucket.length; j++) {
+                int validaCountIndex = 0;
+                for (int k = 0; k < validCount[j]; k++) {
+                    arr[index++] = bucket[j][validaCountIndex++];
+                }
+                validCount[j] = 0;
+            }
         }
     }
 }
