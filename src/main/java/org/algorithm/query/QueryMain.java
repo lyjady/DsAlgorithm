@@ -3,6 +3,7 @@ package org.algorithm.query;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ public class QueryMain {
     @Test
     public void test() {
         int [] arr = {1, 2, 4, 9, 10, 10, 10, 12, 13, 23, 54, 65};
-        System.out.println(binaryQuery(arr, 0, arr.length - 1, 10));
+        System.out.println(fibonacciQuery(arr, 13));
     }
 
     /**
@@ -36,7 +37,7 @@ public class QueryMain {
             return binaryQuery(arr, middleIndex + 1, right, num);
         } else if (num < middle) {
             // 向左递归
-            return binaryQuery(arr, left, middle - 1, num);
+            return binaryQuery(arr, left, middleIndex - 1, num);
         } else {
             List<Integer> list = new ArrayList<>();
             int temp = middleIndex - 1;
@@ -52,5 +53,71 @@ public class QueryMain {
             }
             return list;
         }
+    }
+
+    /**
+     * 插值查找
+     * @param arr
+     * @param left
+     * @param right
+     * @param num
+     * @return
+     */
+    public int insertQuery(int[] arr, int left, int right, int num) {
+        if (left > right || num < arr[0] || num > arr[arr.length - 1]) {
+            return -1;
+        }
+        int middleIndex = left + (right - left) * (num - arr[left]) / (arr[right] -arr[left]);
+        int middleValue = arr[middleIndex];
+        if (num < middleValue) {
+            return insertQuery(arr, left, middleIndex - 1, num);
+        } else if (num > middleValue) {
+            return insertQuery(arr, middleIndex + 1, right, num);
+        } else {
+            return middleIndex;
+        }
+    }
+
+    public int[] fibonacciSeq() {
+        int[] seq = new int[20];
+        seq[0] = 1;
+        seq[1] = 1;
+        for (int i = 2; i < seq.length; i++) {
+            seq[i] = seq[i - 1] + seq[i - 2];
+        }
+        return seq;
+    }
+
+    /**
+     * 斐波那契查找
+     * @param arr
+     */
+    public int fibonacciQuery(int[] arr, int num) {
+        int k = 0;
+        int low = 0;
+        int height = arr.length - 1;
+        int[] fibonacciSeq = fibonacciSeq();
+        // 斐波那契数列适配查找的数组
+        while (height > fibonacciSeq[k] - 1) {
+            k++;
+        }
+        // 被查找的数组适配斐波那契数列
+        int[] temp = Arrays.copyOf(arr, fibonacciSeq[k]);
+        for (int i = height + 1; i < temp.length; i++) {
+            temp[i] = arr[height];
+        }
+        while (low <= height) {
+            int mid = low + fibonacciSeq[k - 1] - 1;
+            if (num < arr[mid]) {
+                k--;
+                height = mid - 1;
+            } else if (num > arr[mid]) {
+                k -= 2;
+                low = mid + 1;
+            } else {
+                return Math.min(mid, height);
+            }
+        }
+        return -1;
     }
 }
