@@ -15,7 +15,7 @@ public class QueryMain {
     @Test
     public void test() {
         int [] arr = {1, 2, 4, 9, 10, 10, 10, 12, 13, 23, 54, 65};
-        System.out.println(fibonacciQuery(arr, 13));
+        System.out.println(fibonacciQuery(arr, 65));
     }
 
     /**
@@ -115,6 +115,8 @@ public class QueryMain {
                 k -= 2;
                 low = mid + 1;
             } else {
+                // 如果原数组被扩容, 并且查找的数正好是最大的也就是最后一个
+                // 这样索引可能会越界, 此时直接返回height
                 return Math.min(mid, height);
             }
         }
