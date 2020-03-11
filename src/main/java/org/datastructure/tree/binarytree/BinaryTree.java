@@ -59,6 +59,10 @@ public class BinaryTree {
         return queue.postOrderQuery(id);
     }
 
+    public void orderSaveBinaryTree(Harem[] harems) {
+        queue.orderSaveBinaryTree(harems, 0);
+    }
+
     /**
      * 删除节点
      * @param id

@@ -120,6 +120,7 @@ public class Harem {
 
     /**
      * 删除节点
+     *
      * @param id
      */
     public void delete(int id) {
@@ -137,6 +138,26 @@ public class Harem {
             } else {
                 rightHarem.delete(id);
             }
+        }
+    }
+
+    /**
+     * 顺序存储二叉树(以遍历二叉树的方式遍历数组, 使用前序遍历)
+     *
+     * @param harems 待遍历的数组
+     * @param index 当前数组的索引
+     */
+    public void orderSaveBinaryTree(Harem[] harems, int index) {
+        System.out.println(harems[index]);
+        // 遍历左子树(从数组的角度看左子树的根节点的索引是当前索引n的2 * n + 1)
+        int leftIndex = 2 * index + 1;
+        if (leftIndex < harems.length) {
+            orderSaveBinaryTree(harems, leftIndex);
+        }
+        // 遍历右子树(从数组的角度看左子树的根节点的索引是当前索引n的2 * n + 2)
+        int rightIndex = 2 * index + 2;
+        if (rightIndex < harems.length) {
+            orderSaveBinaryTree(harems, rightIndex);
         }
     }
 
