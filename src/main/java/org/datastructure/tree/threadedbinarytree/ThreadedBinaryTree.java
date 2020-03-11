@@ -24,7 +24,7 @@ public class ThreadedBinaryTree {
     }
 
     /**
-     * 按照前序的顺序线索化二叉树
+     * 按照中序的顺序线索化二叉树
      */
     public void threadedBinaryTree(HaremExt harem) {
         if (harem == null) {
