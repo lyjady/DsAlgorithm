@@ -36,7 +36,7 @@ public class ThreadedBinaryTreeMain {
         h2.setLeftHarem(h4).setRightHarem(h5);
         h3.setRightHarem(h6);
         threadedBinaryTree = new ThreadedBinaryTree(h1);
-        threadedBinaryTree.threadedBinaryTree(threadedBinaryTree.getQueue());
+        threadedBinaryTree.postThreadedBinaryTree(threadedBinaryTree.getQueue());
         System.out.println("-----------");
     }
 

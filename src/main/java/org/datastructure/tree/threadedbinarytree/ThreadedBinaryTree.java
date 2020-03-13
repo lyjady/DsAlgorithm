@@ -1,5 +1,7 @@
 package org.datastructure.tree.threadedbinarytree;
 
+import org.datastructure.tree.binarytree.Harem;
+
 /**
  * @author LinYongJin
  * @date 2020/3/11 21:01
@@ -86,5 +88,28 @@ public class ThreadedBinaryTree {
         threadedBinaryTree(leftHarem);
         // 线索化右子树
         threadedBinaryTree(rightHarem);
+    }
+
+    public void postThreadedBinaryTree(HaremExt harem) {
+        if (harem == null || (harem.getRightNodeType() != 0 && harem.getLeftNodeType() != 0)) {
+            return;
+        }
+        // 线索化左子树
+        postThreadedBinaryTree(harem.getLeftHarem());
+        // 线索化右子树
+        postThreadedBinaryTree(harem.getRightHarem());
+        // 1.线索化当前节点
+        // 1.1如果当前节点的左子节点为空则指向前驱结点
+        if (harem.getLeftHarem() == null) {
+            harem.setLeftHarem(pre);
+            harem.setLeftNodeType(1);
+        }
+        // 1.2处理当前节点的前一个节点, 将前一个节点的后继节点指向当前节点
+        if (pre != null && pre.getRightHarem() == null) {
+            pre.setRightHarem(harem);
+            pre.setRightNodeType(1);
+        }
+        // 1.3当前节点处理完成, 开启下一个节点的线索化, 将前一个节点设置成当前节点.
+        pre = harem;
     }
 }
