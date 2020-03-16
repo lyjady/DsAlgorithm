@@ -2,6 +2,7 @@ package org.algorithm.sort;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ public class SortMain {
     @Test
     public void test() {
         int[] arr = {231, 32, 32, 123, 334, 1, 6, 34};
-        radixSort(arr);
+        headSort(arr);
         System.out.println(Arrays.toString(arr));
     }
 
@@ -25,7 +26,7 @@ public class SortMain {
             arr[i] = (int) (Math.random() * 80000);
         }
         long startTime = System.currentTimeMillis();
-        radixSort(arr);
+        headSort(arr);
         long endTime = System.currentTimeMillis();
         System.out.println("费时: " + (endTime - startTime) + "ms");
     }
@@ -293,6 +294,52 @@ public class SortMain {
                 validCount[j] = 0;
             }
         }
+    }
+
+    /**
+     * 堆排序
+     *
+     * @param arr 待排序的数组
+     */
+    public void headSort(int[] arr) {
+        int temp = 0;
+        // 先将数组变成大顶堆
+        for (int i = arr.length / 2 - 1; i >= 0; i--) {
+            adjustArr(arr, i, arr.length);
+        }
+        for (int i = 0; i < arr.length; i++) {
+            temp = arr[0];
+            arr[0] = arr[arr.length - i - 1];
+            arr[arr.length - i - 1] = temp;
+            adjustArr(arr, 0, arr.length - i - 1);
+        }
+    }
+
+    /**
+     * 将数组变成大顶堆
+     *
+     * @param arr    数组
+     * @param index  非叶子节点所在的索引
+     * @param length 数组的有效长度
+     */
+    private void adjustArr(int[] arr, int index, int length) {
+        int temp = arr[index];
+        for (int i = 2 * index + 1; i < length; i = i * 2 + 1) {
+            // i指向当前index的左子节点
+            if (i + 1 < length && arr[i] < arr[i + 1]) {
+                // 右子节点大于左子节点, 让i指向右子节点
+                i++;
+            }
+            // 判断i所在节点与index所在节点的大小关系
+            if (arr[i] > temp) {
+                // 节点大于index所在的节点, 需要与index所在的节点进行替换
+                arr[index] = arr[i];
+                index = i;
+            } else {
+                break;
+            }
+        }
+        arr[index] = temp;
     }
 }
 
