@@ -15,16 +15,16 @@ public class ThreadedBinaryTreeMain {
      * 树的结构
      *          1
      *        /  \
-     *      2     3
+     *       2    3
      *     /  \    \
-     *    4   5     6
+     *    4    5    6
      *    前序遍历: 1 -> 2 -> 4 -> 5 -> 3 -> 6
      *    中序遍历: 4 -> 2 -> 5 -> 1 -> 3 -> 6
      *    后序遍历: 4 -> 5 -> 2 -> 6 -> 3 -> 1
      */
     private ThreadedBinaryTree threadedBinaryTree;
 
-    @Test
+    @Before
     public void init() {
         HaremExt h1 = new HaremExt(1, "吉安娜");
         HaremExt h2 = new HaremExt(2, "泰兰德");
@@ -36,11 +36,23 @@ public class ThreadedBinaryTreeMain {
         h2.setLeftHarem(h4).setRightHarem(h5);
         h3.setRightHarem(h6);
         threadedBinaryTree = new ThreadedBinaryTree(h1);
-        threadedBinaryTree.postThreadedBinaryTree(threadedBinaryTree.getQueue());
-        System.out.println("-----------");
     }
 
     @Test
-    public void threadedBinaryTreeTest() {
+    public void initOrder() {
+        threadedBinaryTree.threadedBinaryTree(threadedBinaryTree.getQueue());
+        threadedBinaryTree.initOrder();
+    }
+
+    @Test
+    public void preOrder() {
+        threadedBinaryTree.preThreadBinaryTree(threadedBinaryTree.getQueue());
+        threadedBinaryTree.preOrder();
+    }
+
+    @Test
+    public void postOrder() {
+        threadedBinaryTree.postThreadedBinaryTree(threadedBinaryTree.getQueue());
+        threadedBinaryTree.initOrder();
     }
 }

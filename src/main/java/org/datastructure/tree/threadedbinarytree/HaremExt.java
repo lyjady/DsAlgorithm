@@ -91,4 +91,11 @@ public class HaremExt {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", HaremExt.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("name='" + name + "'")
+                .toString();
+    }
 }
