@@ -63,14 +63,16 @@ public class HuffmanCode {
         StringBuffer subStringBuffer = new StringBuffer(stringBuffer);
         // 将新的路径拼接上历史StringBuffer的路径
         subStringBuffer.append(path);
-        if (node != null && node.getData() == null) {
-            // 非叶子节点
-            // 继续遍历左子树
-            huffmanCode(node.getLeftNode(), LEFT_CHILD_PATH, subStringBuffer, huffmanCodeMap);
-            // 继续遍历右子树
-            huffmanCode(node.getRightNode(), RIGHT_CHILD_PATH, subStringBuffer, huffmanCodeMap);
-        } else {
-            huffmanCodeMap.put(node.getData(), subStringBuffer.toString());
+        if (node != null) {
+            if (node.getData() == null) {
+                // 非叶子节点
+                // 继续遍历左子树
+                huffmanCode(node.getLeftNode(), LEFT_CHILD_PATH, subStringBuffer, huffmanCodeMap);
+                // 继续遍历右子树
+                huffmanCode(node.getRightNode(), RIGHT_CHILD_PATH, subStringBuffer, huffmanCodeMap);
+            } else {
+                huffmanCodeMap.put(node.getData(), subStringBuffer.toString());
+            }
         }
     }
 
