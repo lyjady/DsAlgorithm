@@ -63,7 +63,7 @@ public class HuffmanCode {
         StringBuffer subStringBuffer = new StringBuffer(stringBuffer);
         // 将新的路径拼接上历史StringBuffer的路径
         subStringBuffer.append(path);
-        if (node.getData() == null) {
+        if (node != null && node.getData() == null) {
             // 非叶子节点
             // 继续遍历左子树
             huffmanCode(node.getLeftNode(), LEFT_CHILD_PATH, subStringBuffer, huffmanCodeMap);
