@@ -94,7 +94,7 @@ public class HuffmanCode {
             // 使用输出流输出数据
             os = new FileOutputStream(destFile);
             oos = new ObjectOutputStream(os);
-            oos.writeObject(data);
+            oos.writeObject(encode);
             oos.writeObject(huffmanCodeMap);
         } catch (Exception e) {
             e.printStackTrace();
