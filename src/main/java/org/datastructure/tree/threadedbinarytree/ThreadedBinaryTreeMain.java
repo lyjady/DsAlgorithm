@@ -53,6 +53,6 @@ public class ThreadedBinaryTreeMain {
     @Test
     public void postOrder() {
         threadedBinaryTree.postThreadedBinaryTree(threadedBinaryTree.getQueue());
-        threadedBinaryTree.initOrder();
+        threadedBinaryTree.postOrder();
     }
 }

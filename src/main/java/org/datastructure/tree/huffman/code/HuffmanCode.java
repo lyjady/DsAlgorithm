@@ -33,11 +33,12 @@ public class HuffmanCode {
         }, ArrayList::addAll);
         // 将collect构造成哈夫曼树
         HuffmanTree huffmanTree = new HuffmanTree(collect);
-        huffmanTree.preOrder();
+//        huffmanTree.preOrder();
         Map<Byte, String> huffmanCodeMap = huffmanCode(huffmanTree.getRoot());
-        for (Map.Entry<Byte, String> entry : huffmanCodeMap.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
+//        for (Map.Entry<Byte, String> entry : huffmanCodeMap.entrySet()) {
+//            System.out.println(entry.getKey() + ": " + entry.getValue());
+//        }
+        generalEncode(content.getBytes(), huffmanCodeMap);
     }
 
     private static Map<Byte, String> huffmanCode(Node node) {
@@ -53,9 +54,9 @@ public class HuffmanCode {
     /**
      * 生成字符与发哈夫曼编码的映射表Map
      *
-     * @param node 当前需要遍历子树的root节点, 将这个子树的全部叶子结点放入huffmanCodeMap
-     * @param path 路径 左: 0, 右:1
-     * @param stringBuffer 存储历史路径的StringBuffer
+     * @param node           当前需要遍历子树的root节点, 将这个子树的全部叶子结点放入huffmanCodeMap
+     * @param path           路径 左: 0, 右:1
+     * @param stringBuffer   存储历史路径的StringBuffer
      * @param huffmanCodeMap 哈夫曼表码表
      */
     private static void huffmanCode(Node node, String path, StringBuffer stringBuffer, Map<Byte, String> huffmanCodeMap) {
@@ -76,5 +77,31 @@ public class HuffmanCode {
         }
     }
 
+    /**
+     * 将表示内容的字节数组根据huffmanCodeMap编码成传输的字节数组
+     *
+     * @param content
+     * @param huffmanCodeMap
+     */
+    private static void generalEncode(byte[] content, Map<Byte, String> huffmanCodeMap) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < content.length; i++) {
+            String code = huffmanCodeMap.get(content[i]);
+            sb.append(code);
+        }
+        int size = sb.length() % 8 == 0 ? sb.length() / 8 : sb.length() / 8 + 1;
+        int index = 0;
+        byte[] encode = new byte[size];
+        for (int i = 0; i < sb.length(); i += 8) {
+            String substring;
+            if (i + 8 > sb.length()) {
+                substring = sb.substring(i);
+            } else {
+                substring = sb.substring(i, i + 8);
+            }
+            encode[index++] = (byte) Integer.parseInt(substring, 2);
+        }
+        System.out.println(Arrays.toString(encode));
+    }
 
 }
