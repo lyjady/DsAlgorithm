@@ -1,8 +1,13 @@
 package org.datastructure.tree.huffman.code;
 
+import org.apache.commons.lang3.StringUtils;
 import org.datastructure.tree.huffman.tree.HuffmanTree;
 import org.datastructure.tree.huffman.tree.Node;
 
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -18,7 +23,19 @@ public class HuffmanCode {
     private static final String RIGHT_CHILD_PATH = "1";
 
     public static void main(String[] args) {
-        String content = "i like like like java do you like a java";
+        zipText("i like like like java do you like a java");
+        zipFile(System.getProperty("user.dir") + "/src.bmp", System.getProperty("user.dir") + "/src.zip");
+    }
+
+    /**
+     * 压缩文本
+     *
+     * @param content
+     */
+    public static void zipText(String content) {
+        if (StringUtils.isEmpty(content)) {
+            return;
+        }
         // 将content转换成List
         List<Character> strList = new ArrayList<>();
         for (char c : content.toCharArray()) {
@@ -33,14 +50,78 @@ public class HuffmanCode {
         }, ArrayList::addAll);
         // 将collect构造成哈夫曼树
         HuffmanTree huffmanTree = new HuffmanTree(collect);
-//        huffmanTree.preOrder();
         Map<Byte, String> huffmanCodeMap = huffmanCode(huffmanTree.getRoot());
-//        for (Map.Entry<Byte, String> entry : huffmanCodeMap.entrySet()) {
-//            System.out.println(entry.getKey() + ": " + entry.getValue());
-//        }
-        generalEncode(content.getBytes(), huffmanCodeMap);
+        byte[] encode = encode(content.getBytes(), huffmanCodeMap);
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < encode.length; i++) {
+            boolean isLast = i == encode.length - 1;
+            sb.append(byte2BitStr(!isLast, encode[i]));
+        }
+        String decode = decode(sb, huffmanCodeMap);
+        System.out.println("解码之后的数据: " + decode);
     }
 
+    /**
+     * 压缩文件
+     *
+     * @param srcFile
+     * @param destFile
+     */
+    public static void zipFile(String srcFile, String destFile) {
+        FileInputStream fis = null;
+        OutputStream os = null;
+        ObjectOutputStream oos = null;
+        try {
+            File file = new File(srcFile);
+            fis = new FileInputStream(file);
+            byte[] data = new byte[fis.available()];
+            // 读取文件的字节数据
+            fis.read(data);
+            List<Byte> byteList = new ArrayList<>(data.length);
+            for (int i = 0; i < data.length; i++) {
+                byteList.add(data[i]);
+            }
+            Map<Byte, Long> groupMap = byteList.stream().collect(Collectors.groupingBy(item -> item, Collectors.counting()));
+            ArrayList<Node> collect = groupMap.keySet().stream().collect(ArrayList::new, (list, item) -> {
+                Node node = new Node(Math.toIntExact(groupMap.get(item)), item);
+                list.add(node);
+            }, ArrayList::addAll);
+            HuffmanTree huffmanTree = new HuffmanTree(collect);
+            // 生成哈夫曼编码表
+            Map<Byte, String> huffmanCodeMap = huffmanCode(huffmanTree.getRoot());
+            // 将原内容生成压缩后的字节数组
+            byte[] encode = encode(data, huffmanCodeMap);
+            // 使用输出流输出数据
+            os = new FileOutputStream(destFile);
+            oos = new ObjectOutputStream(os);
+            oos.writeObject(data);
+            oos.writeObject(huffmanCodeMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+                if (os != null) {
+                    os.close();
+                }
+                if (oos != null) {
+                    oos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    /**
+     * 根据指定的内容生成哈夫曼编码表
+     *
+     * @param node
+     * @return
+     */
     private static Map<Byte, String> huffmanCode(Node node) {
         if (node == null) {
             return new HashMap<>();
@@ -83,7 +164,7 @@ public class HuffmanCode {
      * @param content
      * @param huffmanCodeMap
      */
-    private static void generalEncode(byte[] content, Map<Byte, String> huffmanCodeMap) {
+    private static byte[] encode(byte[] content, Map<Byte, String> huffmanCodeMap) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < content.length; i++) {
             String code = huffmanCodeMap.get(content[i]);
@@ -101,7 +182,61 @@ public class HuffmanCode {
             }
             encode[index++] = (byte) Integer.parseInt(substring, 2);
         }
-        System.out.println(Arrays.toString(encode));
+        System.out.println("编码之后的字节数组: " + Arrays.toString(encode));
+        return encode;
     }
 
+    /**
+     * 将编码过后的字节数组转换成字符串形式的二进制数
+     *
+     * @param flag 是否需要补高位
+     * @param data 传入的字节数据
+     */
+    private static String byte2BitStr(boolean flag, byte data) {
+        // 将data转成int
+        int temp = data;
+        // 如果是正数补高位
+        if (flag) {
+            temp |= 256;
+        }
+        // 获得temp对应的二进制的补码
+        String str = Integer.toBinaryString(temp);
+        return flag ? str.substring(str.length() - 8) : str;
+    }
+
+    /**
+     * 将二进制字符串根据哈夫曼编码表解码成原数据
+     *
+     * @param bitContent     二进制字符串化的原数据
+     * @param huffmanCodeMap 哈西曼编码表
+     * @return
+     */
+    private static String decode(StringBuffer bitContent, Map<Byte, String> huffmanCodeMap) {
+        Map<String, Byte> reverseHuffmanCodeMap = new HashMap<>();
+        // 将哈夫曼编码表中的key value对调
+        for (Map.Entry<Byte, String> huffmanCodeMapEntry : huffmanCodeMap.entrySet()) {
+            reverseHuffmanCodeMap.put(huffmanCodeMapEntry.getValue(), huffmanCodeMapEntry.getKey());
+        }
+        List<Byte> datas = new ArrayList<>();
+        for (int i = 0; i < bitContent.length(); ) {
+            int offset = 1;
+            while (true) {
+                // 截取bitContent的内容与反转过后的哈夫曼编码表的数据进行比较
+                String subBitContent = bitContent.substring(i, i + offset);
+                Byte data = reverseHuffmanCodeMap.get(subBitContent);
+                if (data != null) {
+                    // 如果截取到的字符串(原哈夫曼树中的路径)不为空则说明找到当前二进制字符串对应的原数据
+                    datas.add(data);
+                    break;
+                }
+                offset++;
+            }
+            i += offset;
+        }
+        byte[] res = new byte[datas.size()];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = datas.get(i);
+        }
+        return new String(res, StandardCharsets.UTF_8);
+    }
 }
