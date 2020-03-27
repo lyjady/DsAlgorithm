@@ -25,6 +25,7 @@ public class HuffmanCode {
     public static void main(String[] args) {
         zipText("i like like like java do you like a java");
         zipFile(System.getProperty("user.dir") + "/src.bmp", System.getProperty("user.dir") + "/src.zip");
+        unzipFile(System.getProperty("user.dir") + "/src.zip", System.getProperty("user.dir") + "/src2.bmp");
     }
 
     /**
@@ -57,8 +58,8 @@ public class HuffmanCode {
             boolean isLast = i == encode.length - 1;
             sb.append(byte2BitStr(!isLast, encode[i]));
         }
-        String decode = decode(sb, huffmanCodeMap);
-        System.out.println("解码之后的数据: " + decode);
+        byte[] decode = decode(sb, huffmanCodeMap);
+        System.out.println("解码之后的数据: " + new String(decode, StandardCharsets.UTF_8));
     }
 
     /**
@@ -114,6 +115,42 @@ public class HuffmanCode {
             }
         }
 
+    }
+
+    /**
+     * 解压文件
+     *
+     * @param zipPath
+     * @param destPath
+     */
+    private static void unzipFile(String zipPath, String destPath) {
+        ObjectInputStream ois = null;
+        FileOutputStream fos = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(zipPath));
+            // 获得压缩文件的字节数组
+            byte[] binary = (byte[]) ois.readObject();
+            // 获得发h哈夫曼编码表
+            Map<Byte, String> huffmanCodeMap = (Map<Byte, String>) ois.readObject();
+            // 解码
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < binary.length; i++) {
+                boolean isLast = i == binary.length - 1;
+                sb.append(byte2BitStr(!isLast, binary[i]));
+            }
+            byte[] decode = decode(sb, huffmanCodeMap);
+            fos = new FileOutputStream(destPath);
+            fos.write(decode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                ois.close();
+                fos.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -211,7 +248,7 @@ public class HuffmanCode {
      * @param huffmanCodeMap 哈西曼编码表
      * @return
      */
-    private static String decode(StringBuffer bitContent, Map<Byte, String> huffmanCodeMap) {
+    private static byte[] decode(StringBuffer bitContent, Map<Byte, String> huffmanCodeMap) {
         Map<String, Byte> reverseHuffmanCodeMap = new HashMap<>();
         // 将哈夫曼编码表中的key value对调
         for (Map.Entry<Byte, String> huffmanCodeMapEntry : huffmanCodeMap.entrySet()) {
@@ -237,6 +274,6 @@ public class HuffmanCode {
         for (int i = 0; i < res.length; i++) {
             res[i] = datas.get(i);
         }
-        return new String(res, StandardCharsets.UTF_8);
+        return res;
     }
 }
