@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import java.awt.print.Pageable;
 import java.util.StringJoiner;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /**
  * @author LinYongJin
@@ -110,12 +112,38 @@ public class Node {
     public Node delete(int id) {
         Node parentNode = getParent(id);
         if (parentNode != null) {
-            if (parentNode.leftNode.id == id) {
-
-                return null;
-            } else if (parentNode.rightNode.id == id) {
-
-                return null;
+            if (parentNode.leftNode != null && parentNode.leftNode.id == id) {
+                Node deletedNode = parentNode.leftNode;
+                // 判断当前删除的节点的左右子节点是否为空
+                if (deletedNode.leftNode != null && deletedNode.rightNode != null) {
+                    Node maxNode = deletedNode.maxNode();
+                    maxNode.leftNode = deletedNode.leftNode;
+                    maxNode.rightNode = deletedNode.rightNode;
+                    parentNode.leftNode = maxNode;
+                } else if (deletedNode.leftNode != null) {
+                    parentNode.leftNode = deletedNode.leftNode;
+                } else if (deletedNode.rightNode != null) {
+                    parentNode.leftNode = deletedNode.rightNode;
+                } else {
+                    parentNode.leftNode = null;
+                }
+                return deletedNode;
+            } else if (parentNode.rightNode != null && parentNode.rightNode.id == id) {
+                Node deletedNode = parentNode.rightNode;
+                // 判断当前删除的节点的左右子节点是否为空
+                if (deletedNode.leftNode != null && deletedNode.rightNode != null) {
+                    Node maxNode = deletedNode.maxNode();
+                    maxNode.leftNode = deletedNode.leftNode;
+                    maxNode.rightNode = deletedNode.rightNode;
+                    parentNode.rightNode = maxNode;
+                } else if (deletedNode.leftNode != null) {
+                    parentNode.rightNode = deletedNode.leftNode;
+                } else if (deletedNode.rightNode != null) {
+                    parentNode.rightNode = deletedNode.rightNode;
+                } else {
+                    parentNode.rightNode = null;
+                }
+                return deletedNode;
             } else {
                 return null;
             }
@@ -165,7 +193,7 @@ public class Node {
      * @return
      */
     public Node maxNode() {
-        // 因为当前树满足二叉排序树, 找出子树的最小值就是找出当前这个子树的最左的叶子节点
+        // 因为当前树满足二叉排序树, 找出子树的最大值就是找出当前这个子树的最右的叶子节点
         Node node = this;
         while (node.rightNode.rightNode != null) {
             node = node.rightNode;

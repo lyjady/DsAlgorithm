@@ -18,13 +18,19 @@ public class BinarySortTreeMain {
     public static void main(String[] args) {
         Node[] heroes = {new Node(7, "Jaina"), new Node(9, "Tyrande"),
                 new Node(5, "Sylvanas"), new Node(3, "Whitemane"),
-                new Node(8, "Onyxia"), new Node(10, "Isera"), new Node(6, "Aleksassa")};
+                new Node(10, "Isera"), new Node(6, "Aleksassa")};
         BinarySortTree binarySortTree = new BinarySortTree();
         binarySortTree.create(heroes);
         binarySortTree.middleOrder();
         System.out.println("-------------------------");
         System.out.println(binarySortTree.middleSearch(1));
         System.out.println("-------------------------");
+        binarySortTree.delete(9);
+        binarySortTree.delete(3);
+        binarySortTree.delete(5);
+        binarySortTree.delete(6);
+        binarySortTree.delete(8);
+        binarySortTree.delete(10);
         binarySortTree.delete(7);
     }
 }
