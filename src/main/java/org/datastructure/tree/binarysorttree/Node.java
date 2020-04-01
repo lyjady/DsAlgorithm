@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.print.Pageable;
+import java.util.Arrays;
 import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -25,6 +26,10 @@ public class Node {
     private Node rightNode;
 
     public Node() {
+    }
+
+    public Node(int id) {
+        this.id = id;
     }
 
     public Node(int id, String name, Node leftNode, Node rightNode) {
@@ -60,6 +65,15 @@ public class Node {
                 this.rightNode.insertNode(node);
             } else {
                 this.rightNode = node;
+            }
+        }
+        if (this.leftNode != null && this.rightNode != null) {
+            if (Math.abs(this.leftNode.height() - this.rightNode.height()) > 1) {
+                if (this.leftNode.height() > this.rightNode.height()) {
+                    this.rightRotate();
+                } else {
+                    this.leftRotate();
+                }
             }
         }
     }
@@ -201,6 +215,56 @@ public class Node {
         Node returnNode = node.rightNode;
         node.rightNode = null;
         return returnNode;
+    }
+
+    /**
+     * 左子树高度
+     * @return
+     */
+    public int leftTreeHeight() {
+        return this.leftNode != null ? this.leftNode.height() : 0;
+    }
+
+    /**
+     * 右子树高度
+     * @return
+     */
+    public int rightTreeHeight() {
+        return this.rightNode != null ? this.rightNode.height() : 0;
+    }
+
+    /**
+     * 返回调用节点为根节点的树的高度
+     *
+     * @return
+     */
+    public int height() {
+        return Math.max(leftNode == null ? 0 : leftNode.height(), rightNode == null ? 0 : rightNode.height()) + 1;
+    }
+
+    /**
+     * 将以当前节点为根节点的树进行左旋转
+     */
+    public void leftRotate() {
+        // 创建新的节点, 新节点的值为当前节点的值(当前节点不一定为根节点)
+        Node newNode = new Node(this.id, this.name);
+        // 把新节点的左子树设置成当前节点的左子树
+        newNode.leftNode = this.leftNode;
+        // 把新节点的右子树设置成当前节点右子树的左子树
+        newNode.rightNode = this.rightNode.leftNode;
+        // 把当前节点的值替换成右子节点的值
+        this.id = this.rightNode.id;
+        // 把当前节点的右子树替换成当前节点右子树的右子树
+        this.rightNode = this.rightNode.rightNode;
+        // 把当前节点的左子树设置成新节点
+        this.leftNode = newNode;
+    }
+
+    /**
+     * 将以当前节点为根节点的树进行右旋转
+     */
+    public void rightRotate() {
+        throw new UnsupportedOperationException("该方法还未实现");
     }
 
     @Override
