@@ -68,10 +68,16 @@ public class Node {
             }
         }
         if (this.leftNode != null && this.rightNode != null) {
-            if (Math.abs(this.leftNode.height() - this.rightNode.height()) > 1) {
-                if (this.leftNode.height() > this.rightNode.height()) {
+            if (Math.abs(leftTreeHeight() - rightTreeHeight()) > 1) {
+                if (leftTreeHeight() > rightTreeHeight()) {
+                    if (this.leftNode != null && this.leftNode.rightTreeHeight() > this.leftNode.leftTreeHeight()) {
+                        this.leftNode.leftRotate();
+                    }
                     this.rightRotate();
                 } else {
+                    if (this.rightNode != null && this.rightNode.leftTreeHeight() > this.rightNode.rightTreeHeight()) {
+                        this.rightNode.rightRotate();
+                    }
                     this.leftRotate();
                 }
             }
@@ -254,6 +260,7 @@ public class Node {
         newNode.rightNode = this.rightNode.leftNode;
         // 把当前节点的值替换成右子节点的值
         this.id = this.rightNode.id;
+        this.name = this.rightNode.name;
         // 把当前节点的右子树替换成当前节点右子树的右子树
         this.rightNode = this.rightNode.rightNode;
         // 把当前节点的左子树设置成新节点
@@ -264,7 +271,13 @@ public class Node {
      * 将以当前节点为根节点的树进行右旋转
      */
     public void rightRotate() {
-        throw new UnsupportedOperationException("该方法还未实现");
+        Node newNode = new Node(this.id, this.name);
+        newNode.rightNode = rightNode;
+        newNode.leftNode = this.leftNode.rightNode;
+        this.id = this.leftNode.id;
+        this.name = this.leftNode.name;
+        this.leftNode = this.leftNode.leftNode;
+        this.rightNode = newNode;
     }
 
     @Override
