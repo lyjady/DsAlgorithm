@@ -1,8 +1,6 @@
 package org.datastructure.graph;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author LinYongJin
@@ -34,9 +32,6 @@ public class Graph {
         path = new int[vertexNumber][vertexNumber];
         vertexes = new ArrayList<>();
         isVisited = new boolean[vertexNumber];
-        for (int i = 0; i < vertexNumber; i++) {
-            isVisited[i] = false;
-        }
     }
 
     /**
@@ -105,6 +100,34 @@ public class Graph {
                 dfs(i);
             }
         }
+        isVisited = new boolean[vertexes.size()];
+    }
+
+    private void bfs(int root) {
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            Integer head = queue.poll();
+            System.out.print(getVertex(head) + " --> ");
+            isVisited[head] = true;
+            int next = getFirstNeighbor(head);
+            while (next != -1) {
+                if (!isVisited[next]) {
+                    queue.add(next);
+                    isVisited[next] = true;
+                }
+                next = getNextNeighbor(head, next);
+            }
+        }
+    }
+
+    public void bfs() {
+        for (int i = 0; i < vertexes.size(); i++) {
+            if (!isVisited[i]) {
+                bfs(i);
+            }
+        }
+        isVisited = new boolean[vertexes.size()];
     }
 
     /**
@@ -114,9 +137,9 @@ public class Graph {
      * @return
      */
     private int getFirstNeighbor(int vertex) {
-        for (int column : path[vertex]) {
-            if (path[vertex][column] == 1) {
-                return column;
+        for (int i = 0; i < path[vertex].length; i++) {
+            if (path[vertex][i] == 1) {
+                return i;
             }
         }
         return -1;
@@ -139,14 +162,19 @@ public class Graph {
     }
 
     public static void main(String[] args) {
-        Graph graph = new Graph(5);
-        Arrays.stream(new String[]{"A", "B", "C", "D", "E"}).forEach(graph::addVertex);
+        Graph graph = new Graph(8);
+        Arrays.stream(new String[]{"1", "2", "3", "4", "5", "6", "7", "8"}).forEach(graph::addVertex);
         graph.addPath(0, 1, 1);
         graph.addPath(0, 2, 1);
-        graph.addPath(1, 2, 1);
         graph.addPath(1, 3, 1);
         graph.addPath(1, 4, 1);
-        graph.printPath();
+        graph.addPath(3, 7, 1);
+        graph.addPath(4, 7, 1);
+        graph.addPath(2, 5, 1);
+        graph.addPath(2, 6, 1);
+        graph.addPath(5, 6, 1);
         graph.dfs();
+        System.out.println();
+        graph.bfs();
     }
 }
