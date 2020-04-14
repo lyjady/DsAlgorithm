@@ -14,17 +14,17 @@ public class QueryMain {
 
     @Test
     public void test() {
-        int [] arr = {1, 2, 4, 9, 10, 10, 10, 12, 13, 23, 54, 65};
-        System.out.println(fibonacciQuery(arr, 65));
+        int[] arr = {1, 2, 4, 9, 10, 10, 10, 12, 13, 23, 54, 65};
+        System.out.println(binaryQueryWithRecursive(arr, 65));
     }
 
     /**
      * 二分查找法
      *
-     * @param arr 查找的数组
-     * @param left 左边的索引
+     * @param arr   查找的数组
+     * @param left  左边的索引
      * @param right 右边的索引
-     * @param num 查找的元素
+     * @param num   查找的元素
      */
     public List<Integer> binaryQuery(int[] arr, int left, int right, int num) {
         if (left > right) {
@@ -57,6 +57,7 @@ public class QueryMain {
 
     /**
      * 插值查找
+     *
      * @param arr
      * @param left
      * @param right
@@ -67,7 +68,7 @@ public class QueryMain {
         if (left > right || num < arr[0] || num > arr[arr.length - 1]) {
             return -1;
         }
-        int middleIndex = left + (right - left) * (num - arr[left]) / (arr[right] -arr[left]);
+        int middleIndex = left + (right - left) * (num - arr[left]) / (arr[right] - arr[left]);
         int middleValue = arr[middleIndex];
         if (num < middleValue) {
             return insertQuery(arr, left, middleIndex - 1, num);
@@ -90,6 +91,7 @@ public class QueryMain {
 
     /**
      * 斐波那契查找
+     *
      * @param arr
      */
     public int fibonacciQuery(int[] arr, int num) {
@@ -118,6 +120,29 @@ public class QueryMain {
                 // 如果原数组被扩容, 并且查找的数正好是最大的也就是最后一个
                 // 这样索引可能会越界, 此时直接返回height
                 return Math.min(mid, height);
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 非递归的二分查找法
+     *
+     * @param arr
+     * @param num
+     * @return
+     */
+    public int binaryQueryWithRecursive(int[] arr, int num) {
+        int left = 0;
+        int right = arr.length - 1;
+        while (left <= right) {
+            int middle = (left + right) / 2;
+            if (arr[middle] == num) {
+                return middle;
+            } else if (arr[middle] > num) {
+                right = middle - 1;
+            } else {
+                left = middle + 1;
             }
         }
         return -1;
