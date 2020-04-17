@@ -7,7 +7,7 @@ package org.algorithm.collection;
 public class DivideConquer {
 
     public static void main(String[] args) {
-        hanota(4, 'a', 'b', 'c');
+        hanota(5, 'a', 'b', 'c');
     }
 
     /**
