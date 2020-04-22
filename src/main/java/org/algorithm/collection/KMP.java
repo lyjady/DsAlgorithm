@@ -9,8 +9,8 @@ import java.util.Arrays;
 public class KMP {
 
     public static void main(String[] args) {
-        String motherStr = "BBC ABCDABD ABCDABCDABDE";
-        String sonStr = "ABCDABD";
+        String motherStr = "BBC ABCDAB ABCDABCDABDE";
+        String sonStr =              "ABCDABD";
         int[] next = generateNext(sonStr);
         System.out.println(KMPSearch(motherStr, sonStr, next));
     }
@@ -21,13 +21,15 @@ public class KMP {
         int originI = 0;
         for (int i = 0; i < motherStr.length(); i++) {
             if (motherStr.charAt(i) == sonStr.charAt(j)) {
+                if (j == 0) {
+                    originI = i;
+                }
                 j++;
                 step++;
             } else {
                 if (j > 0) {
                     int move = step - next[j - 1];
                     i = move == 0 ? i : originI + move - 1;
-                    originI = i + 1;
                     step = 0;
                     j = 0;
                 }
