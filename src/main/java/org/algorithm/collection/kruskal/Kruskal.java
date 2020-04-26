@@ -16,7 +16,11 @@ public class Kruskal {
     public static void main(String[] args) {
         Graph graph = init();
         Edge[] edges = generateEdgeArr(graph);
-        System.out.println(Arrays.toString(edges));
+        Edge[] minTree = generateMinTree(edges, graph.getVertex() - 1, graph);
+        for (Edge edge : minTree) {
+            System.out.printf("%c -> %c = %d", edge.getStart(), edge.getEnd(), edge.getWeight());
+            System.out.println();
+        }
     }
 
     public static Graph init() {
@@ -48,5 +52,50 @@ public class Kruskal {
         }
         edgeList.sort(Comparator.comparingInt(Edge::getWeight));
         return edgeList.toArray(new Edge[0]);
+    }
+
+    private static Edge[] generateMinTree(Edge[] edges, int vertex, Graph graph) {
+        Edge[] minTree = new Edge[vertex];
+        // 保存顶点所对应的的终点的索引
+        int[] ends = new int[vertex + 1];
+        List<Edge> minTreeList = new ArrayList<>();
+        for (Edge edge : edges) {
+            // 判断当前边的两个顶点的终点是否一样
+            int start = getVertexIndex(edge.getStart(), graph);
+            int end = getVertexIndex(edge.getEnd(), graph);
+            // 计算出start和end的终点
+            int f1 = getEnds(ends, start);
+            int f2 = getEnds(ends, end);
+            if (f1 != f2) {
+                // 不等则说明将当前节点加入到最小生成树的集合中不会形成回路
+                minTreeList.add(edge);
+                // 设置当前边的两个节点的终点
+                ends[f1] = f2;
+            }
+        }
+        return minTreeList.toArray(minTree);
+    }
+
+    private static int getVertexIndex(char vertex, Graph graph) {
+        for (int i = 0; i < graph.getData().length; i++) {
+            if (graph.getData()[i] == vertex) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 等到当前节点的所对应的终点的索引
+     *
+     * @param ends  保存着顶点的对应终点的索引
+     * @param index  当前节点的索引
+     * @return
+     */
+    private static int getEnds(int[] ends, int index) {
+        while (ends[index] != 0) {
+            index = ends[index];
+        }
+        return index;
     }
 }
