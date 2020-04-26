@@ -1,4 +1,4 @@
-package org.algorithm.collection;
+package org.algorithm.collection.kmp;
 
 import java.util.Arrays;
 

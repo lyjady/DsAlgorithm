@@ -1,4 +1,4 @@
-package org.algorithm.collection;
+package org.algorithm.collection.greed;
 
 import org.apache.commons.lang3.StringUtils;
 
