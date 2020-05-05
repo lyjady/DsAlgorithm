@@ -38,16 +38,25 @@ public class Dijkstra {
      * @param currentIndex    当前顶点的索引
      */
     private static void dijkstra(Graph graph, VisitedVertex visitedVertex, int currentIndex) {
-        int[][] matrix = graph.getWeight();
+        update(currentIndex, graph, visitedVertex);
+        for (int i = 0; i < graph.getData().length; i++) {
+            currentIndex = visitedVertex.updateArr();
+            update(currentIndex, graph, visitedVertex);
+        }
+    }
+
+    private static void update(int index, Graph graph, VisitedVertex visitedVertex) {
+        int len = 0;
         // 遍历邻接矩阵中当前顶点所在的行, 那行的数据就是当前顶点到其他顶点的距离
-        for (int i = 0; i < matrix[currentIndex].length; i++) {
+        int[][] matrix = graph.getWeight();
+        for (int i = 0; i < matrix[index].length; i++) {
             // i此时就是当前节点的即将遍历的邻接节点
             // distance是初始节点到i这个几点的距离, distance = currentIndex到i的距离 + 初始节点到currentIndex的距离
-            int distance = matrix[currentIndex][i] + visitedVertex.getDis(currentIndex);
+            len = visitedVertex.getDis(index) + matrix[index][i];
             // 将distance与dis数组中初始节点到i的距离(这个距离是初始节点到上一个节点再到i的距离)比较
-            if (!visitedVertex.isVisited(i) && distance < visitedVertex.getDis(i)) {
-                visitedVertex.updateDis(i, distance);
-                visitedVertex.updatePre(i, currentIndex);
+            if (visitedVertex.isVisited(i) && len < visitedVertex.getDis(i)) {
+                visitedVertex.updatePre(i, index);
+                visitedVertex.updateDis(i, len);
             }
         }
     }

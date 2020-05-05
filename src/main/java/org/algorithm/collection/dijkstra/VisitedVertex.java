@@ -83,4 +83,17 @@ public class VisitedVertex {
     public int getDis(int index) {
         return dis[index];
     }
+
+    public int updateArr() {
+        int min = 65535;
+        int index = 0;
+        for (int i = 0; i < alreadyArr.length; i++) {
+            if (alreadyArr[i] == 0 && dis[i] < min) {
+                min = dis[i];
+                index = i;
+            }
+        }
+        alreadyArr[index] = 1;
+        return index;
+    }
 }
