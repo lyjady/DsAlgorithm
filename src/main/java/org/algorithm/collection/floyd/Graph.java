@@ -53,7 +53,7 @@ public class Graph {
             }
             System.out.println();
             for (int j = 0; j < vertex.length; j++) {
-                System.out.print("(" + vertex[i] + "->" + vertex[j] + ": " + weight[i][j] + ")" + "\t");
+                System.out.print("(" + vertex[i] + " -> " + vertex[j] + " : " + weight[i][j] + ")" + "\t");
             }
             System.out.println();
         }
